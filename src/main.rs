@@ -41,7 +41,18 @@ fn run() {
 fn read() {}
 
 fn parse(expr: String) {
-    let splitted: Vec<&str> = expr.trim().split("").collect();
+    let splitted: Vec<&str> = expr.trim().trim().split("").collect();
+    let mut overtrimmed: Vec<&str> = Vec::new();
+    for i in splitted {
+        if i == "" {
+            continue;
+        } else {
+            overtrimmed.push(i)
+        }
+    }
+    println!("{:?}", overtrimmed)
 }
 
-fn test() {}
+fn test() {
+    
+}
