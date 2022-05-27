@@ -2,16 +2,27 @@ use regex::Regex;
 use std::env::{args, Args};
 use std::io;
 
-// (?<=\\d)(?=\\D)|(?=\\d)(?<=\\D)
-
-/*
-enum Expr {}
-
-struct Function {
-    name: String,
-    operations: Vec<Expr>,
+enum ExprType {
+    BinaryExpression(Operator, Box<Expr>, Box<Expr>),
+    NumericLiteral(u64),
 }
-*/
+
+enum Operator {
+    PLUS,
+    MIN,
+    DIV,
+    MUL,
+    EQUAL,
+}
+
+pub struct Expr {
+    expr_type: ExprType,
+}
+
+impl Expr {
+    pub fn new(expr_type: ExprType) {}
+}
+
 fn main() {
     let mut args: Args = args();
     let first_arg: String = match args.nth(1) {
@@ -69,10 +80,48 @@ fn parse(expr: String) {
 }
 
 fn test() {
+    /*
     let expr: &str = "15 + 22";
-
-    let re = Regex::new(r"([a-z]+)([0-9]+)").unwrap();
+    let re = Regex::new(r"\d+").unwrap();
     let sliced_expr: Vec<&str> = re.split(expr).collect();
-
     println!("{:?}", sliced_expr);
+    */
+
+    use ExprType::*;
+
+    // 18 + 16
+    let expression = Expr {
+        expr_type: BinaryExpression(
+            Operator::PLUS,
+            Box::new(Expr {
+                expr_type: NumericLiteral(18),
+            }),
+            Box::new(Expr {
+                expr_type: NumericLiteral(16),
+            }),
+        ),
+    };
+
+    // 25 - (10 * 2)
+    let more_complex_expr = Expr {
+        expr_type: BinaryExpression(
+            Operator::MIN,
+            Box::new(Expr {
+                expr_type: NumericLiteral(28),
+            }),
+            Box::new(Expr {
+                expr_type: BinaryExpression(
+                    Operator::MUL,
+                    Box::new(Expr {
+                        expr_type: NumericLiteral(10),
+                    }),
+                    Box::new(Expr {
+                        expr_type: NumericLiteral(2),
+                    }),
+                ),
+            }),
+        ),
+    };
+
+    // let res = match expression.expr_type {};
 }
