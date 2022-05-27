@@ -1,14 +1,29 @@
-use std::env::args;
+use regex::Regex;
+use std::env::{args, Args};
 use std::io;
 
+// (?<=\\d)(?=\\D)|(?=\\d)(?<=\\D)
+
+/*
+enum Expr {}
+
+struct Function {
+    name: String,
+    operations: Vec<Expr>,
+}
+*/
 fn main() {
-    let args: Vec<String> = args().collect();
-    if args.len() > 1 {
-        match args[1].as_str() {
+    let mut args: Args = args();
+    let first_arg: String = match args.nth(1) {
+        Some(val) => val,
+        None => String::from(""),
+    };
+    if first_arg != "" {
+        match first_arg.as_str() {
             "read" => read(),
             "run" => run(),
             "test" => test(),
-            _ => println!("Invalid argument. You can only use [read, run]"),
+            _ => println!("Invalid argument. You can only use [read, run, test]"),
         }
     } else {
         doc()
@@ -17,7 +32,7 @@ fn main() {
 
 fn doc() {
     println!("Hi! Welcome to Mathaly. Don't try to do something impossible for math because it just won't work.");
-    println!("Arguments: [read, run]");
+    println!("Arguments: [read, run, test]");
     println!("  - read: Read and parse a provided file.");
     println!("  - run: Run and parse a provided expression as input (stdin).");
 }
@@ -54,5 +69,10 @@ fn parse(expr: String) {
 }
 
 fn test() {
-    
+    let expr: &str = "15 + 22";
+
+    let re = Regex::new(r"([a-z]+)([0-9]+)").unwrap();
+    let sliced_expr: Vec<&str> = re.split(expr).collect();
+
+    println!("{:?}", sliced_expr);
 }
