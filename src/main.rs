@@ -1,27 +1,7 @@
-use regex::Regex;
+mod tokenizer;
+
 use std::env::{args, Args};
 use std::io;
-
-enum ExprType {
-    BinaryExpression(Operator, Box<Expr>, Box<Expr>),
-    NumericLiteral(u64),
-}
-
-enum Operator {
-    PLUS,
-    MIN,
-    DIV,
-    MUL,
-    EQUAL,
-}
-
-pub struct Expr {
-    expr_type: ExprType,
-}
-
-impl Expr {
-    pub fn new(expr_type: ExprType) {}
-}
 
 fn main() {
     let mut args: Args = args();
@@ -87,41 +67,26 @@ fn test() {
     println!("{:?}", sliced_expr);
     */
 
+    use tokenizer::*;
     use ExprType::*;
 
-    // 18 + 16
-    let expression = Expr {
-        expr_type: BinaryExpression(
-            Operator::PLUS,
-            Box::new(Expr {
-                expr_type: NumericLiteral(18),
-            }),
-            Box::new(Expr {
-                expr_type: NumericLiteral(16),
-            }),
-        ),
-    };
+    // 18 + 16 = 34
+    let expression: i64 = Expr::new(BinaryExpression {
+        op: Operator::PLUS,
+        left: Expr::new(NumericLiteral { val: 18 }),
+        right: Expr::new(NumericLiteral { val: 16 }),
+    });
 
-    // 25 - (10 * 2)
-    let more_complex_expr = Expr {
-        expr_type: BinaryExpression(
-            Operator::MIN,
-            Box::new(Expr {
-                expr_type: NumericLiteral(28),
-            }),
-            Box::new(Expr {
-                expr_type: BinaryExpression(
-                    Operator::MUL,
-                    Box::new(Expr {
-                        expr_type: NumericLiteral(10),
-                    }),
-                    Box::new(Expr {
-                        expr_type: NumericLiteral(2),
-                    }),
-                ),
-            }),
-        ),
-    };
-
-    // let res = match expression.expr_type {};
+    // 28 - (10 * 2) = -5
+    let more_complex_expr: i64 = Expr::new(BinaryExpression {
+        op: Operator::MIN,
+        left: Expr::new(NumericLiteral { val: 28 }),
+        right: Expr::new(BinaryExpression {
+            op: Operator::MUL,
+            left: Expr::new(NumericLiteral { val: 10 }),
+            right: Expr::new(NumericLiteral { val: 2 }),
+        }),
+    });
+    println!("{:?}", expression);
+    println!("{:?}", more_complex_expr);
 }
