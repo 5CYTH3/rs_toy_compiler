@@ -77,7 +77,7 @@ fn test() {
         right: Expr::new(NumericLiteral { val: 16 }),
     });
 
-    // 28 - (10 * 2) = -5
+    // 28 - 10 * 2 = -5
     let more_complex_expr: i64 = Expr::new(BinaryExpression {
         op: Operator::MIN,
         left: Expr::new(NumericLiteral { val: 28 }),
