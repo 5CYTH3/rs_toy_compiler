@@ -23,6 +23,15 @@ enum ExprResult {
     B(String),
 }
 
+impl ExprResult {
+    pub fn get() {
+        match *self {
+            ExprResult::A(ref data) => data,
+            ExprResult::B(ref data) => data
+        }
+    }
+}
+
 impl Expr {
     pub fn new(expr_type: ExprType) -> ExprResult {
         match expr_type {
