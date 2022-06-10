@@ -9,7 +9,7 @@ fn main() {
         Some(val) => val,
         None => String::from(""),
     };
-    
+
     if first_arg != "" {
         match first_arg.as_str() {
             "read" => read(),
@@ -88,6 +88,8 @@ fn test() {
             right: Expr::new(NumericLiteral { val: 2 }),
         }),
     });
+
+    // let function: Func = Func::new()
     println!("{:?}", expression);
     println!("{:?}", more_complex_expr);
 }

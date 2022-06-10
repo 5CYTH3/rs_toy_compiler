@@ -1,9 +1,19 @@
-use either::*;
-
 pub enum ExprType {
     BinaryExpression { op: Operator, left: i64, right: i64 },
     NumericLiteral { val: i64 },
-    AssignExpression { op: Operator, left: Identifier(String), right: Expr }
+    AssignExpression { op: Operator, left: Identifier(String), right: i64 }
+}
+
+pub struct Func {
+    id: Identifier(String),
+    param: Parameter(String),
+    operation: ParamExpr(String, Expr)
+}
+
+impl Func {
+    pub fn new(id: Identifier, param: Parameter, operation: ParamExpr) -> Func {
+        return Func { id, param, operation };
+    }
 }
 
 pub enum Operator {
