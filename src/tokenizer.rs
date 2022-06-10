@@ -4,6 +4,7 @@ pub enum ExprType {
     AssignExpression { op: Operator, left: Identifier(String), right: i64 }
 }
 
+// https://youtu.be/Ra_Fk7JFMoo?t=6012
 pub struct Func {
     id: Identifier(String),
     param: Parameter(String),
