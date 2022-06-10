@@ -9,6 +9,7 @@ fn main() {
         Some(val) => val,
         None => String::from(""),
     };
+    
     if first_arg != "" {
         match first_arg.as_str() {
             "read" => read(),
