@@ -1,4 +1,3 @@
-mod parser;
 mod tokenizer;
 
 use std::env::{args, Args};
@@ -15,7 +14,7 @@ fn main() {
         match first_arg.as_str() {
             "read" => read(),
             "run" => run(),
-            "test" => todo!(),
+            "test" => test(),
             _ => println!("Invalid argument. You can only use [read, run, test]"),
         }
     } else {
@@ -46,8 +45,32 @@ fn run() {
 }
 
 fn read() {
-    use parser::*;
+    let expr: &str = "15 + 22";
+    println!("{:?}", parse(expr))
+}
 
-    let mut inst_parser: Parser = Parser::new();
-    inst_parser.parse("23".to_string());
+fn parse(expr: &str) -> Vec<&str> {
+    let splitted: Vec<&str> = expr.trim().split("").collect();
+    let mut overtrimmed: Vec<&str> = Vec::new();
+    for i in splitted {
+        if i == "" || i == " " {
+            continue;
+        } else {
+            overtrimmed.push(i)
+        }
+    }
+    return overtrimmed;
+}
+
+fn test() {
+    // 28 - 10 * 2 = 8
+    let more_complex_expr: i64 = Expr::new(BinaryExpr {
+        op: Token::MIN,
+        left: Expr::new(NumericLiteral(28)),
+        right: Expr::new(BinaryExpr {
+            op: Token::MUL,
+            left: Expr::new(NumericLiteral(10)),
+            right: Expr::new(NumericLiteral(2)),
+        }),
+    });
 }
