@@ -1,5 +1,5 @@
+mod lexer;
 mod parser;
-mod tokenizer;
 
 use std::env::{args, Args};
 use std::io;
@@ -46,8 +46,7 @@ fn run() {
 }
 
 fn read() {
-    use parser::*;
+    use lexer::*;
 
-    let mut inst_parser: Parser = Parser::new();
-    inst_parser.parse("23".to_string());
+    let lex = lexer::Lexer::new();
 }

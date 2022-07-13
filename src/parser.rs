@@ -1,40 +1,48 @@
-use crate::tokenizer::*;
-use std::boxed::Box;
+use crate::parser::literals::{Literal, NumericLiteral};
 
-#[derive(Debug)]
+pub mod literals;
+mod parser_tests;
+use crate::lexer::*;
+
 pub struct Parser {
     string: String,
+    l: Lexer,
+    lookahead: Token,
 }
 
+use std::error::Error;
 impl Parser {
-    pub fn new() -> Parser {
-        return Parser {
-            string: "".to_string(),
-        };
+    pub fn new() -> Self {
+        Parser {
+            string: String::from(""),
+            l: Lexer::new(),
+            lookahead: Token::DEFAULT,
+        }
     }
 
-    pub fn parse(&mut self, string: String) {
-        self.string = string
+    pub fn parse(&mut self, string: &str) -> Literal {
+        self.string = String::from(string);
+        self.l.init(String::from(string));
+
+        self.lookahead = self.l.get_next_token();
+
+        Parser::program(self)
     }
 
-    pub fn program(&self) -> Box<dyn Literal> {
-        return Box::new(Parser::numeric_literal(self));
+    fn program(&self) -> Literal {
+        Literal::Numeric(self.numeric_literal())
     }
 
-    pub fn numeric_literal(&self) -> NumericLiteral {
-        return NumericLiteral::new(self.string.parse().unwrap());
+    fn numeric_literal(&self) -> NumericLiteral {
+        NumericLiteral::new(self.string.parse().unwrap())
     }
-}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn test_numeric_literal() {
-        let mut inst_parser: Parser = Parser::new();
-        assert_eq!(
-            inst_parser.parse("323".to_string()),
-            NumericLiteral { val: 323 }
-        )
+    fn eat(&self) -> Result<Token, Box<dyn Error>> {
+        let t = &self.lookahead;
+        if !assert_eq!(t, Token::DEFAULT) {
+            Ok(Token::DEFAULT)
+        } else {
+            Err()
+        }
     }
 }
