@@ -10,7 +10,6 @@ pub struct Parser {
     lookahead: Token,
 }
 
-use std::error::Error;
 impl Parser {
     pub fn new() -> Self {
         Parser {
@@ -37,12 +36,10 @@ impl Parser {
         NumericLiteral::new(self.string.parse().unwrap())
     }
 
-    fn eat(&self) -> Result<Token, Box<dyn Error>> {
-        let t = &self.lookahead;
-        if !assert_eq!(t, Token::DEFAULT) {
-            Ok(Token::DEFAULT)
-        } else {
-            Err()
-        }
+    fn eat(mut self) -> Token {
+        let mut t = self.lookahead;
+        t = self.l.get_next_token();
+
+        return t;
     }
 }
