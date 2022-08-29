@@ -31,12 +31,12 @@ impl Lexer {
         }
 
         let s_str = &self.string[..self.cursor as usize];
-        let re = Regex::new(r"^\d+").unwrap();
+        let number = Regex::new(r"^\d+").unwrap();
 
-        if re.is_match(s_str) {
+        if number.is_match(s_str) {
             return Token::DEFAULT;
         } else {
-            return Token::DEFAULT;
+            println!("Wrong pattern! This is not a number :x")
         }
     }
 }
