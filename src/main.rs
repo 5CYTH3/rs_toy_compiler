@@ -1,8 +1,7 @@
-mod lexer;
-mod parser;
-
 use std::env::{args, Args};
 use std::io;
+
+mod parse;
 
 fn main() {
     let mut args: Args = args();
@@ -46,7 +45,5 @@ fn run() {
 }
 
 fn read() {
-    use lexer::*;
-
-    let lex = lexer::Lexer::new();
+    // let program: &str = "27";
 }
