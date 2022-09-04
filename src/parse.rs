@@ -52,6 +52,7 @@ impl Parser {
 
         let new_lookahead = self.lexer.get_next_token();
         self.lookahead = new_lookahead;
+
         return t.unwrap();
     }
 }
