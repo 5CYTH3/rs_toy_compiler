@@ -1,9 +1,30 @@
 use std::fmt;
 
-pub enum Token {
+#[derive(Eq, PartialEq, Clone)]
+pub struct Token {
+    pub r#type: TokenType,
+    pub val: String,
+}
+
+impl fmt::Display for Token {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "DT \"{}\" with value {}", self.r#type, self.val)
+    }
+}
+
+impl Token {
+    pub fn new(t_type: TokenType, val: String) -> Self {
+        Token {
+            r#type: t_type,
+            val,
+        }
+    }
+}
+#[derive(Eq, PartialEq, Clone)]
+pub enum TokenType {
     // Primitive types
-    Int { val: String },
-    String { val: String },
+    Int,
+    String,
 
     // Bin Op
     Plus,      // +
@@ -17,7 +38,7 @@ pub enum Token {
     Percent,   // %
 }
 
-impl Token {
+impl TokenType {
     pub fn guard_precedence(&self) -> Option<u8> {
         match self {
             /*
@@ -33,20 +54,20 @@ impl Token {
     }
 }
 
-impl fmt::Display for Token {
+impl fmt::Display for TokenType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let fmt_token = match self {
-            Token::Int { val } => val,
-            Token::String { val } => val,
-            Token::Plus => "+",
-            Token::Min => "-",
-            Token::Mul => "*",
-            Token::Div => "/",
-            Token::Less => "<",
-            Token::Greater => ">",
-            Token::EqLess => "<=",
-            Token::EqGreater => ">=",
-            Token::Percent => "%",
+            TokenType::Int => "Int",
+            TokenType::String => "String",
+            TokenType::Plus => "+",
+            TokenType::Min => "-",
+            TokenType::Mul => "*",
+            TokenType::Div => "/",
+            TokenType::Less => "<",
+            TokenType::Greater => ">",
+            TokenType::EqLess => "<=",
+            TokenType::EqGreater => ">=",
+            TokenType::Percent => "%",
             _ => "!!!uninmplemented!!!",
         };
         write!(f, "{}", fmt_token)

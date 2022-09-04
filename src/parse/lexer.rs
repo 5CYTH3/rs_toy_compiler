@@ -1,5 +1,6 @@
 // use regex::Regex;
-use crate::parse::token::Token;
+use crate::parse::token::{Token, TokenType};
+use regex::Regex;
 
 pub struct Lexer {
     string: String,
@@ -7,7 +8,7 @@ pub struct Lexer {
 }
 
 fn test() {
-    let pubspec: Vec<(&str, Token)> = vec![("", Token::Int { _ }), ()];
+    // let pubspec: Vec<(&str, Token)> = vec![("", Token::Int), ()];
 }
 
 impl Lexer {
@@ -26,8 +27,7 @@ impl Lexer {
         return self.cursor < self.string.len().try_into().unwrap();
     }
 
-    /*
-    pub fn get_next_token(&self) -> Literal {
+    pub fn get_next_token(&self) -> Option<Token> {
         if !self.has_more_token() {
             panic!("No more tokens ;D")
         }
@@ -38,13 +38,12 @@ impl Lexer {
         let r_num = Regex::new(r"^\d+").unwrap();
 
         // "string" rule for regex
-        let r_str = Regex::new(r"").unwrap();
+        // let r_str = Regex::new(r"").unwrap();
 
         if r_num.is_match(s_str) {
-            return Literal::Numeric(s_str.parse::<i32>().unwrap());
+            return Some(Token::new(TokenType::Int, s_str.to_owned()));
         }
 
-        return Literal::Numeric(0);
+        return None;
     }
-    */
 }
