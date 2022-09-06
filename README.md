@@ -14,7 +14,7 @@ func invert {
 ```
 
 ## Operator wiki
-| Operator | Reference                                                                                                                                              | Example                       |
-|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
-| :=       | Assignment operator Is used to assign something to a variable                                                                                          | a :: String := "Hello World!" |
-| ::       | Type-Resolution operator Is used to define the type of a variable, a parameter. You should read it as "a belongs to the Natural set" or "a has type T" | a :: Natural a :: T           |
+| Operator | Reference                                                                                                                                                 | Example                       |
+|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------|
+| :=       | Assignment operator<br>Is used to assign something to a variable                                                                                          | a :: String := "Hello World!" |
+| ::       | Type-Resolution operator<br>Is used to define the type of a variable, a parameter. You should read it as "a belongs to the Natural set" or "a has type T" | a :: Natural<br>a :: T        |
