@@ -23,7 +23,8 @@ impl Token {
 #[derive(Eq, PartialEq, Clone, Debug)]
 pub enum TokenType {
     // Primitive types
-    Int,
+    Integers,
+    Natural,
     String,
 
     // Bin Op
@@ -57,7 +58,7 @@ impl TokenType {
 impl fmt::Display for TokenType {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let fmt_token = match self {
-            TokenType::Int => "Int",
+            TokenType::Integers => "Int",
             TokenType::String => "String",
             TokenType::Plus => "+",
             TokenType::Min => "-",

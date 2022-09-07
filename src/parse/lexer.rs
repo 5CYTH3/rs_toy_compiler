@@ -33,23 +33,29 @@ impl Lexer {
         }
 
         // Sliced string
-        let s_str = &self.string[1..self.cursor];
+        let s_str = &self.string[self.cursor..];
     
         // "number" rule for regex
         let r_num = Regex::new(r"^\d+").unwrap();
 
         // "string" rule for regex
-        // let r_str = Regex::new(r"").unwrap();
+        let r_str = Regex::new(r#"^\\"[^\\"]*\\""#).unwrap();
 
         match r_num.captures(s_str) {
             Some(caps) => {
                 self.cursor += caps.get(0).unwrap().as_str().len();
-                println!("CAP LEN {}",  caps.get(0).unwrap().as_str().len());
                 return Some(Token::new(TokenType::Int, caps.get(0).unwrap().as_str().to_string()));
             },
-            None => return None
+            None => ()
         }
 
+        match r_str.captures(s_str) {
+            Some(caps) => {
+                self.cursor += caps.get(0).unwrap().as_str().len();
+                return Some(Token::new(TokenType::Int, caps.get(0).unwrap().as_str().to_string()));
+            },
+            None => ()
+        }
 
         
     }

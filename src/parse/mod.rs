@@ -37,8 +37,8 @@ impl Parser {
     }
 
     fn numeric_literal(&mut self) -> Token {
-        let t = self.eat(TokenType::Int);
-        return Token::new(TokenType::Int, t.val);
+        let t = self.eat(TokenType::Integers);
+        return Token::new(TokenType::Integers, t.val);
     }
 
     fn eat(&mut self, tt: TokenType) -> Token {
