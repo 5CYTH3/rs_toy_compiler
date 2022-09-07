@@ -1,6 +1,6 @@
 use std::fmt;
 
-#[derive(Eq, PartialEq, Clone)]
+#[derive(Eq, PartialEq, Clone, Debug)]
 pub struct Token {
     pub r#type: TokenType,
     pub val: String,
@@ -20,7 +20,7 @@ impl Token {
         }
     }
 }
-#[derive(Eq, PartialEq, Clone)]
+#[derive(Eq, PartialEq, Clone, Debug)]
 pub enum TokenType {
     // Primitive types
     Int,

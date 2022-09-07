@@ -8,7 +8,7 @@ The syntax would look like this :
 def x :: {Natural} := 0;
 
 
-Axiom (x :: {Natural}) -> {Decimal}
+Axiom (x :: {Natural}) -> {Integer}
 func invert {
 	return -x
 }

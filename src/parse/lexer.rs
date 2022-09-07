@@ -4,7 +4,7 @@ use regex::Regex;
 
 pub struct Lexer {
     string: String,
-    cursor: i32,
+    cursor: usize,
 }
 
 fn test() {
@@ -15,7 +15,7 @@ impl Lexer {
     pub fn new() -> Self {
         return Lexer {
             string: String::from(""),
-            cursor: 0,
+            cursor: 1,
         };
     }
     pub fn init(&mut self, string: String) {
@@ -27,23 +27,30 @@ impl Lexer {
         return self.cursor < self.string.len().try_into().unwrap();
     }
 
-    pub fn get_next_token(&self) -> Option<Token> {
+    pub fn get_next_token(&mut self) -> Option<Token> {
         if !self.has_more_token() {
-            panic!("No more tokens ;D")
+            return None;
         }
 
         // Sliced string
-        let s_str = &self.string[..self.cursor as usize];
+        let s_str = &self.string[1..self.cursor];
+    
         // "number" rule for regex
         let r_num = Regex::new(r"^\d+").unwrap();
 
         // "string" rule for regex
         // let r_str = Regex::new(r"").unwrap();
 
-        if r_num.is_match(s_str) {
-            return Some(Token::new(TokenType::Int, s_str.to_owned()));
+        match r_num.captures(s_str) {
+            Some(caps) => {
+                self.cursor += caps.get(0).unwrap().as_str().len();
+                println!("CAP LEN {}",  caps.get(0).unwrap().as_str().len());
+                return Some(Token::new(TokenType::Int, caps.get(0).unwrap().as_str().to_string()));
+            },
+            None => return None
         }
 
-        return None;
+
+        
     }
 }

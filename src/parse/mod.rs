@@ -23,8 +23,11 @@ impl Parser {
     // parse
     pub fn parse(&mut self, program: String) -> Token {
         self.program = program.clone();
-        self.lexer.init(program.clone());
+        self.lexer.init(program);
         self.lookahead = self.lexer.get_next_token();
+
+        println!("LOOKAHEAD VAL : {:?}", self.lookahead);
+
         return self.program();
     }
 
@@ -46,7 +49,7 @@ impl Parser {
 
         let ttype = t.clone().unwrap().r#type;
 
-        if ttype == tt {
+        if ttype != tt {
             panic!("UnexpectedToken!    -> Expected: {} and got: {}", tt, ttype)
         }
 
