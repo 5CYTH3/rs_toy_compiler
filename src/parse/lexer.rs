@@ -44,7 +44,7 @@ impl Lexer {
         match r_num.captures(s_str) {
             Some(caps) => {
                 self.cursor += caps.get(0).unwrap().as_str().len();
-                return Some(Token::new(TokenType::Int, caps.get(0).unwrap().as_str().to_string()));
+                return Some(Token::new(TokenType::Integers, caps.get(0).unwrap().as_str().to_string()));
             },
             None => ()
         }
@@ -52,10 +52,12 @@ impl Lexer {
         match r_str.captures(s_str) {
             Some(caps) => {
                 self.cursor += caps.get(0).unwrap().as_str().len();
-                return Some(Token::new(TokenType::Int, caps.get(0).unwrap().as_str().to_string()));
+                return Some(Token::new(TokenType::String, caps.get(0).unwrap().as_str().to_string()));
             },
             None => ()
         }
+
+        return None
 
         
     }

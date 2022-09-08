@@ -33,12 +33,25 @@ impl Parser {
 
     // Main entry point of everything
     fn program(&mut self) -> Token {
-        return self.numeric_literal();
+        return self.literal();
+    }
+
+    fn literal(&mut self) -> Token {
+        match self.lookahead.clone().unwrap().r#type {
+            TokenType::Integers => return self.numeric_literal(),
+            TokenType::String => return self.string_literal(),
+            _ => panic!("NOT COVERED")
+        }
     }
 
     fn numeric_literal(&mut self) -> Token {
         let t = self.eat(TokenType::Integers);
         return Token::new(TokenType::Integers, t.val);
+    }
+
+    fn string_literal(&mut self) -> Token {
+        let t = self.eat(TokenType::String);
+        return Token::new(TokenType::String, t.val);
     }
 
     fn eat(&mut self, tt: TokenType) -> Token {
