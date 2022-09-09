@@ -40,7 +40,7 @@ impl Parser {
         match self.lookahead.clone().unwrap().r#type {
             TokenType::Integers => return self.numeric_literal(),
             TokenType::String => return self.string_literal(),
-            _ => panic!("NOT COVERED")
+            _ => panic!("NOT COVERED"),
         }
     }
 
