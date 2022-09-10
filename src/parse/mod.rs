@@ -1,6 +1,8 @@
 pub mod lexer;
 pub mod token;
 
+use core::panic;
+
 use lexer::Lexer;
 use token::Token;
 use token::TokenType;
@@ -37,10 +39,14 @@ impl Parser {
     }
 
     fn literal(&mut self) -> Token {
-        match self.lookahead.clone().unwrap().r#type {
-            TokenType::Integers => return self.numeric_literal(),
-            TokenType::String => return self.string_literal(),
-            _ => panic!("NOT COVERED"),
+        match self.lookahead.clone() {
+            Some(token) => match token.r#type {
+                TokenType::Integers => return self.numeric_literal(),
+                TokenType::String => return self.numeric_literal(),
+
+                _ => panic!("NOT COVERED"),
+            },
+            None => panic!("Not covered"),
         }
     }
 
@@ -60,6 +66,7 @@ impl Parser {
             panic!("SyntaxError!    -> Expected: {} and got: None", tt)
         }
 
+        // ! Peut etre pb ici
         let ttype = t.clone().unwrap().r#type;
 
         if ttype != tt {

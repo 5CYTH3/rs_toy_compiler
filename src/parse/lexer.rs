@@ -35,9 +35,10 @@ impl Lexer {
         }
 
         // ! Change TokenType to Option<TokenType> to allow None return
-        let regex_set: Vec<(&str, TokenType)> = Vec::from([
-            (r"^\d+", TokenType::Integers),
-            (r#"^"[^"]*""#, TokenType::String),
+        let regex_set: Vec<(&str, Option<TokenType>)> = Vec::from([
+            (r"^\d+", Some(TokenType::Integers)),     // Integers
+            (r#"^"[^"]*""#, Some(TokenType::String)), // String
+            (r"^\s+", None),                          // Whitespace
         ]);
 
         // Sliced string
@@ -50,25 +51,18 @@ impl Lexer {
                 Some(caps) => {
                     self.cursor += caps.get(0).unwrap().as_str().len();
                     match r_s.1 {
-                        TokenType::Integers => {
+                        Some(token_type) => {
                             return Some(Token::new(
-                                TokenType::Integers,
+                                token_type,
                                 caps.get(0).unwrap().as_str().to_string(),
                             ));
                         }
-                        TokenType::String => {
-                            return Some(Token::new(
-                                TokenType::String,
-                                caps.get(0).unwrap().as_str().to_string(),
-                            ));
-                        }
-                        _ => panic!("Unimplemented. Error occured when resolving token type."),
+                        None => return self.get_next_token(), // _ => panic!("Unimplemented. Error occured when resolving token type."),
                     }
                 }
-                None => (),
+                None => continue,
             }
         }
-
         return None;
     }
 }
