@@ -48,7 +48,7 @@ use parse::*;
 
 fn read() {
     let mut parser = Parser::new();
-    let program: &str = "  35 ";
+    let program: &str = "\"25\"";
     let ast = parser.parse(program.to_owned());
 
     println!("{}", ast)
