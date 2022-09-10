@@ -35,8 +35,17 @@ impl Parser {
 
     // Main entry point of everything
     fn program(&mut self) -> Token {
-        return self.literal();
+        return self.statement_list();
     }
+
+    // TODO: Why not convert those things into a struct?
+    fn statement_list(&self) -> Vec<Token> {
+        let statement_list: Vec<Token> = vec![self.statement()];
+
+        return statement_list;
+    }
+
+    fn statement(&self) -> Token {}
 
     fn literal(&mut self) -> Token {
         match self.lookahead.clone() {
