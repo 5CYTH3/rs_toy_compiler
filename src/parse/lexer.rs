@@ -34,7 +34,6 @@ impl Lexer {
             return None;
         }
 
-        // ! Change TokenType to Option<TokenType> to allow None return
         let regex_set: Vec<(&str, Option<TokenType>)> = Vec::from([
             (r"^\d+", Some(TokenType::Integers)),     // Integers
             (r#"^"[^"]*""#, Some(TokenType::String)), // String

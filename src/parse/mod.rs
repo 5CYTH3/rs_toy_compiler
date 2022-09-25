@@ -23,7 +23,7 @@ impl Parser {
     }
 
     // parse
-    pub fn parse(&mut self, program: String) -> Token {
+    pub fn parse(&mut self, program: String) -> Vec<Token> {
         self.program = program.clone();
         self.lexer.init(program);
         self.lookahead = self.lexer.get_next_token();
@@ -34,7 +34,7 @@ impl Parser {
     }
 
     // Main entry point of everything
-    fn program(&mut self) -> Token {
+    fn program(&mut self) -> Vec<Token> {
         return self.statement_list();
     }
 
@@ -60,31 +60,39 @@ impl Parser {
     }
 
     fn numeric_literal(&mut self) -> Token {
-        let t = self.eat(TokenType::Integers);
-        return Token::new(TokenType::Integers, t.val);
+        let eaten_token = self.eat(TokenType::Integers);
+        return Token::new(TokenType::Integers, eaten_token.val);
     }
 
     fn string_literal(&mut self) -> Token {
-        let t = self.eat(TokenType::String);
-        return Token::new(TokenType::String, t.val);
+        let eaten_token = self.eat(TokenType::String);
+        return Token::new(TokenType::String, eaten_token.val);
     }
 
-    fn eat(&mut self, tt: TokenType) -> Token {
-        let t = self.lookahead.clone();
-        if t.clone().is_none() {
-            panic!("SyntaxError!    -> Expected: {} and got: None", tt)
-        }
+    fn eat(&mut self, targetted_token_type: TokenType) -> Token {
+        let t: Token = match self.lookahead.clone() {
+            Some(val) => val,
+            None => panic!(
+                "SyntaxError!    -> Expected: {} and got: None",
+                targetted_token_type
+            ),
+        };
 
         // ! Peut etre pb ici
-        let ttype = t.clone().unwrap().r#type;
+        let token_type: TokenType = match t {
+            Token { val, r#type } => r#type,
+        };
 
-        if ttype != tt {
-            panic!("UnexpectedToken!    -> Expected: {} and got: {}", tt, ttype)
+        if token_type != targetted_token_type {
+            panic!(
+                "UnexpectedToken!    -> Expected: {} and got: {}",
+                token_type, targetted_token_type
+            )
         }
 
         let new_lookahead = self.lexer.get_next_token();
         self.lookahead = new_lookahead;
 
-        return t.unwrap();
+        return t;
     }
 }

@@ -51,5 +51,5 @@ fn read() {
     let program: &str = "\"25\"";
     let ast = parser.parse(program.to_owned());
 
-    println!("{}", ast)
+    println!("{:?}", ast)
 }
