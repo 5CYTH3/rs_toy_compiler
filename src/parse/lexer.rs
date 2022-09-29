@@ -48,13 +48,11 @@ impl Lexer {
         for r_s in regex_set {
             match Regex::new(r_s.0).unwrap().captures(s_str) {
                 Some(caps) => {
-                    self.cursor += caps.get(0).unwrap().as_str().len();
+                    let capture = caps.get(0).unwrap().as_str();
+                    self.cursor += capture.len();
                     match r_s.1 {
                         Some(token_type) => {
-                            return Some(Token::new(
-                                token_type,
-                                caps.get(0).unwrap().as_str().to_string(),
-                            ));
+                            return Some(Token::new(token_type, capture.to_string()));
                         }
                         None => return self.get_next_token(), // _ => panic!("Unimplemented. Error occured when resolving token type."),
                     }
