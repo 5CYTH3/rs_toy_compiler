@@ -13,6 +13,7 @@ pub struct Parser {
     lookahead: Option<Token>,
 }
 
+//TODO: Convert all those functions to Struct or Enums because it is useless as fuck to have that much function
 impl Parser {
     pub fn new() -> Self {
         Parser {
@@ -28,8 +29,6 @@ impl Parser {
         self.lexer.init(program);
         self.lookahead = self.lexer.get_next_token();
 
-        println!("LOOKAHEAD VAL : {:?}", self.lookahead);
-
         return self.program();
     }
 
@@ -38,14 +37,46 @@ impl Parser {
         return self.statement_list();
     }
 
-    // TODO: Why not convert those things into a struct?
-    fn statement_list(&self) -> Vec<Token> {
-        let statement_list: Vec<Token> = vec![self.statement()];
+    fn statement_list(&mut self) -> Vec<Token> {
+        let mut statement_list: Vec<Token> = vec![self.statement()];
+
+        while self.lookahead != None {
+            statement_list.push(self.statement());
+        }
 
         return statement_list;
     }
 
-    fn statement(&self) -> Token {}
+    fn statement(&mut self) -> Token {
+        match self.lookahead {
+            Some(val) => match val.r#type {
+                TokenType::LBracket => return self.block_statement(),
+                _ => return self.expr_statement(),
+            },
+            None => panic!("Lookahead empty"),
+        }
+    }
+
+    fn block_statement(&mut self) -> Token {
+        self.eat(TokenType::LBracket);
+        let body: Vec<Token> = if self.lookahead.unwrap().r#type != TokenType::RBracket {
+            self.statement_list()
+        } else {
+            vec![]
+        };
+        self.eat(TokenType::RBracket);
+    }
+
+    fn expr_statement(&mut self) -> Token {
+        let expr = self.expr();
+        self.eat(TokenType::SemiColon);
+
+        return expr;
+    }
+
+    fn expr(&mut self) -> Token {
+        return self.literal();
+    }
 
     fn literal(&mut self) -> Token {
         match self.lookahead.clone() {
@@ -79,7 +110,7 @@ impl Parser {
         };
 
         // ! Peut etre pb ici
-        let token_type: TokenType = match t {
+        let token_type: TokenType = match t.clone() {
             Token { val, r#type } => r#type,
         };
 
@@ -94,5 +125,26 @@ impl Parser {
         self.lookahead = new_lookahead;
 
         return t;
+    }
+}
+
+#[cfg(test)]
+mod parser_test {
+
+    use super::*;
+
+    #[test]
+    fn test_parsing() {
+        let mut parser = Parser::new();
+        let program: &str = "\"25\";";
+        let ast = parser.parse(program.to_owned());
+
+        assert_eq!(
+            ast,
+            vec![Token {
+                r#type: TokenType::String,
+                val: String::from("\"25\"")
+            }]
+        )
     }
 }

@@ -6,9 +6,11 @@ pub struct Token {
     pub val: String,
 }
 
+// TODO: Create an alias for Vec<Token> to allow better display https://stackoverflow.com/a/30325430
+
 impl fmt::Display for Token {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "DT \"{}\" with value {}", self.r#type, self.val)
+        write!(f, "\"{}\"", self.val)
     }
 }
 
@@ -20,6 +22,7 @@ impl Token {
         }
     }
 }
+
 #[derive(Eq, PartialEq, Clone, Debug)]
 pub enum TokenType {
     // Primitive types
@@ -37,6 +40,9 @@ pub enum TokenType {
     EqLess,    // <=
     EqGreater, // >=
     Percent,   // %
+    SemiColon, // ;
+    LBracket,  // {
+    RBracket,  // }
 }
 
 impl TokenType {
@@ -69,6 +75,7 @@ impl fmt::Display for TokenType {
             TokenType::EqLess => "<=",
             TokenType::EqGreater => ">=",
             TokenType::Percent => "%",
+            TokenType::SemiColon => ";",
             _ => "!!!uninmplemented!!!",
         };
         write!(f, "{}", fmt_token)

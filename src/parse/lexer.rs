@@ -7,10 +7,6 @@ pub struct Lexer {
     cursor: usize,
 }
 
-fn test() {
-    // let pubspec: Vec<(&str, Token)> = vec![("", Token::Int), ()];
-}
-
 impl Lexer {
     pub fn new() -> Self {
         return Lexer {
@@ -38,6 +34,9 @@ impl Lexer {
             (r"^\d+", Some(TokenType::Integers)),     // Integers
             (r#"^"[^"]*""#, Some(TokenType::String)), // String
             (r"^\s+", None),                          // Whitespace
+            (r"^;", Some(TokenType::SemiColon)),
+            (r"^\{", Some(TokenType::LBracket)),
+            (r"^\}", Some(TokenType::RBracket)),
         ]);
 
         // Sliced string
