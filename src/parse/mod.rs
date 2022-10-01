@@ -7,6 +7,13 @@ use lexer::Lexer;
 use token::Token;
 use token::TokenType;
 
+// Migrate all Vec<Token> to statements and StatementList.
+pub enum Statement {
+    Block(StatementList),
+    Expr(Token),
+}
+pub type StatementList = Vec<Statement>;
+
 pub struct Parser {
     program: String,
     lexer: Lexer,

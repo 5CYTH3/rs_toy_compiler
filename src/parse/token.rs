@@ -45,6 +45,7 @@ pub enum TokenType {
     RBracket,  // }
 }
 
+
 impl TokenType {
     pub fn guard_precedence(&self) -> Option<u8> {
         match self {
