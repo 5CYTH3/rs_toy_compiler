@@ -8,6 +8,7 @@ use token::Token;
 use token::TokenType;
 
 // Migrate all Vec<Token> to statements and StatementList.
+#[derive(Debug, PartialEq)]
 pub enum Statement {
     Block(StatementList),
     Expr(Token),
@@ -31,7 +32,7 @@ impl Parser {
     }
 
     // parse
-    pub fn parse(&mut self, program: String) -> Vec<Token> {
+    pub fn parse(&mut self, program: String) -> Vec<Statement> {
         self.program = program.clone();
         self.lexer.init(program);
         self.lookahead = self.lexer.get_next_token();
@@ -40,12 +41,12 @@ impl Parser {
     }
 
     // Main entry point of everything
-    fn program(&mut self) -> Vec<Token> {
+    fn program(&mut self) -> StatementList {
         return self.statement_list();
     }
 
-    fn statement_list(&mut self) -> Vec<Token> {
-        let mut statement_list: Vec<Token> = vec![self.statement()];
+    fn statement_list(&mut self) -> StatementList {
+        let mut statement_list: Vec<Statement> = vec![self.statement()];
 
         while self.lookahead != None {
             statement_list.push(self.statement());
@@ -54,8 +55,8 @@ impl Parser {
         return statement_list;
     }
 
-    fn statement(&mut self) -> Token {
-        match self.lookahead {
+    fn statement(&mut self) -> Statement {
+        match self.lookahead.clone() {
             Some(val) => match val.r#type {
                 TokenType::LBracket => return self.block_statement(),
                 _ => return self.expr_statement(),
@@ -64,25 +65,28 @@ impl Parser {
         }
     }
 
-    fn block_statement(&mut self) -> Token {
+    // WHat is this method supposed to return? Is it body?
+    fn block_statement(&mut self) -> Statement {
+        let lookahead = self.lookahead.clone().unwrap().r#type;
         self.eat(TokenType::LBracket);
-        let body: Vec<Token> = if self.lookahead.unwrap().r#type != TokenType::RBracket {
+        let body: Vec<Statement> = if lookahead != TokenType::RBracket {
             self.statement_list()
         } else {
             vec![]
         };
         self.eat(TokenType::RBracket);
+        return Statement::Block(body)
     }
 
-    fn expr_statement(&mut self) -> Token {
+    fn expr_statement(&mut self) -> Statement {
         let expr = self.expr();
         self.eat(TokenType::SemiColon);
 
         return expr;
     }
 
-    fn expr(&mut self) -> Token {
-        return self.literal();
+    fn expr(&mut self) -> Statement {
+        return Statement::Expr(self.literal());
     }
 
     fn literal(&mut self) -> Token {
@@ -90,7 +94,6 @@ impl Parser {
             Some(token) => match token.r#type {
                 TokenType::Integers => return self.numeric_literal(),
                 TokenType::String => return self.string_literal(),
-
                 _ => panic!("NOT COVERED"),
             },
             None => panic!("Not covered"),
@@ -148,10 +151,12 @@ mod parser_test {
 
         assert_eq!(
             ast,
-            vec![Token {
-                r#type: TokenType::String,
-                val: String::from("\"25\"")
-            }]
+            vec![Statement::Expr(
+                Token {
+                    r#type: TokenType::String,
+                    val: String::from("\"25\"")
+                }
+            )]
         )
     }
 }

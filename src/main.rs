@@ -52,7 +52,7 @@ fn read() {
     let program: &str = r#"
     "25"; 
     25;
-    "#;
+    {}"#;
     let ast = parser.parse(program.to_owned());
 
     println!("{:?}", ast)
