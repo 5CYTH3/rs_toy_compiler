@@ -9,7 +9,7 @@ def x :: Natural := 0;
 
 Axiom (x :: Natural) -> Integer
 func invert {
-	return -x
+	return -x;
 }
 ```
 

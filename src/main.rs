@@ -1,6 +1,7 @@
 use std::env::{args, Args};
 use std::io;
 
+mod compiler;
 mod errors;
 mod log;
 mod parse;
@@ -33,13 +34,19 @@ fn doc() {
 
 fn run() {
     println!("Welcome to the Karm runner!\n|-> To run any math expression, just type them below!");
+    let mut parser = Parser::new();
+
     loop {
         print!("> ");
         io::Write::flush(&mut io::stdout()).expect("flush failed!");
         let mut input = String::new();
         match io::stdin().read_line(&mut input) {
-            Ok(_) => (),
-            Err(_) => println!("Failed to parse current expr: {}", input),
+            Ok(_) => {
+                let ast = parser.parse(input);
+                println!("{:?}", ast)
+            }
+
+            Err(_) => println!("Failed to parse current expr: {:?}", input),
         }
     }
 }
@@ -50,9 +57,9 @@ fn read() {
     // TODO: Create logging system to log all messages and halt the program (like when there is a syntax error).
     let mut parser = Parser::new();
     let program: &str = r#"
-    "25"; 
-    25;
-    {}"#;
+    {
+        345 23;
+    }"#;
     let ast = parser.parse(program.to_owned());
 
     println!("{:?}", ast)

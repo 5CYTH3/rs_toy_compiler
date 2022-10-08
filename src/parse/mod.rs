@@ -75,7 +75,7 @@ impl Parser {
             vec![]
         };
         self.eat(TokenType::RBracket);
-        return Statement::Block(body)
+        return Statement::Block(body);
     }
 
     fn expr_statement(&mut self) -> Statement {
@@ -151,12 +151,10 @@ mod parser_test {
 
         assert_eq!(
             ast,
-            vec![Statement::Expr(
-                Token {
-                    r#type: TokenType::String,
-                    val: String::from("\"25\"")
-                }
-            )]
+            vec![Statement::Expr(Token {
+                r#type: TokenType::String,
+                val: String::from("\"25\"")
+            })]
         )
     }
 }
