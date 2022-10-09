@@ -58,12 +58,11 @@ fn read() {
     // TODO: Create logging system to log all messages and halt the program (like when there is a syntax error).
     let mut parser = Parser::new();
     let program: &str = r#"
-    {
-        345;
-    }"#;
+    345;"#;
     let ast = parser.parse(program.to_owned());
-    //let compiler = Compiler::new(ast.clone());
-    // compiler.compile();
 
-    println!("{:?}", ast)
+    println!("{:?}", ast);
+
+    let mut compiler = Compiler::new(ast.clone());
+    compiler.compile();
 }

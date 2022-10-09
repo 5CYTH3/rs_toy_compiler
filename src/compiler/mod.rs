@@ -1,7 +1,10 @@
+#![allow(dead_code)]
+
 use std::{fs::File, io::Write};
 
-use crate::parse::{Statement, StatementList};
+use crate::parse::{token::TokenType, Statement, StatementList};
 
+#[derive(Debug)]
 pub struct Compiler {
     ast: StatementList,
     file: File,
@@ -20,15 +23,22 @@ _start:
         return Compiler { ast, file };
     }
 
-    pub fn compile(&self) {
-        for statement in &self.ast {
-            &self.eval(statement);
+    pub fn compile(&mut self) {
+        let ast = &self.ast.clone();
+        for statement in ast {
+            self.eval(statement);
         }
     }
 
-    fn eval(&self, statement: &Statement) {
+    fn eval(&mut self, statement: &Statement) {
         match statement {
             Statement::Expr(token) => match token.r#type {
+                TokenType::String => {
+                    self.file.write(b"STRING");
+                }
+                TokenType::Integers => {
+                    self.file.write(b"NATURAL");
+                }
                 _ => panic!("Unimplemented"),
             },
             Statement::Block(s_list) => {
