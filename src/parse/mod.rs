@@ -22,6 +22,10 @@ pub struct Parser {
     lookahead: Option<Token>,
 }
 
+/*
+    Parser ;
+    Main entrypoint of the whole code.
+*/
 //TODO: Convert all those functions to Struct or Enums because it is useless as fuck to have that much function
 impl Parser {
     pub fn new() -> Self {
@@ -32,8 +36,12 @@ impl Parser {
         }
     }
 
-    // parse
-    pub fn parse(&mut self, program: String) -> Vec<Statement> {
+    /*
+    Parse ;
+    Returns a Vector of Statements (StatementList), that constitute the tokenized code.
+    */
+    pub fn parse(&mut self, program: String) -> StatementList {
+        // Init the Parser with values.
         self.program = program.clone();
         self.lexer.init(program);
         self.lookahead = self.lexer.get_next_token();
@@ -41,11 +49,14 @@ impl Parser {
         return self.program();
     }
 
-    // Main entry point of everything
     fn program(&mut self) -> StatementList {
         return self.statement_list(None);
     }
 
+    /*
+    StatementList ;
+    Returns a Vector of Statements containing all tokens between a LeftBracket and a RightBracket.
+    */
     fn statement_list(&mut self, stop_lookahead: Option<TokenType>) -> StatementList {
         let mut statement_list: Vec<Statement> = vec![self.statement()];
 
@@ -58,6 +69,10 @@ impl Parser {
         return statement_list;
     }
 
+    /*
+    Statement ;
+    Returns a "Statement", either a BlockStatement ({}) or a ExpressionStatement (Literal) depending on the next token.
+    */
     fn statement(&mut self) -> Statement {
         match self.lookahead.clone() {
             Some(val) => match val.r#type {
@@ -68,21 +83,27 @@ impl Parser {
         }
     }
 
-    // WHat is this method supposed to return? Is it body?
+    /*
+    BlockStatement ;
+    Returns a StatementList if the next token (lookahead) isn't a Right Bracket.
+    Eats the trailing Right Bracket.
+    */
     fn block_statement(&mut self) -> Statement {
         let lookahead = self.lookahead.clone().unwrap().r#type;
         self.eat(TokenType::LBracket);
         let body: Vec<Statement> = if lookahead != TokenType::RBracket {
-            println!("yes");
             self.statement_list(Some(TokenType::RBracket))
         } else {
             vec![]
         };
         self.eat(TokenType::RBracket);
-
         return Statement::Block(body);
     }
 
+    /*
+    ExpressionStatement ;
+    Returns an expression and deletes the trailing semicolon.
+    */
     fn expr_statement(&mut self) -> Statement {
         let expr = self.expr();
         self.eat(TokenType::SemiColon);
