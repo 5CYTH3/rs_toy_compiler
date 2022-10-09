@@ -62,8 +62,8 @@ fn read() {
         345;
     }"#;
     let ast = parser.parse(program.to_owned());
-    let compiler = Compiler::new(ast.clone());
-    compiler.compile();
+    //let compiler = Compiler::new(ast.clone());
+    // compiler.compile();
 
     println!("{:?}", ast)
 }

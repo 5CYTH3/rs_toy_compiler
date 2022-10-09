@@ -12,8 +12,8 @@ impl Compiler {
         let mut file = File::create("out.asm").expect("Cannot create asm file.");
         file.write_all(
             b"global .text
-            global _start
-        _start:
+    global _start
+_start:
         ",
         )
         .expect("Could not append basic assembly structure such as main entry point");

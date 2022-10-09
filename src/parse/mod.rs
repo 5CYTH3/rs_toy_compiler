@@ -43,13 +43,15 @@ impl Parser {
 
     // Main entry point of everything
     fn program(&mut self) -> StatementList {
-        return self.statement_list();
+        return self.statement_list(None);
     }
 
-    fn statement_list(&mut self) -> StatementList {
+    fn statement_list(&mut self, stop_lookahead: Option<TokenType>) -> StatementList {
         let mut statement_list: Vec<Statement> = vec![self.statement()];
 
-        while self.lookahead != None {
+        while self.lookahead.clone() != None
+            && self.lookahead.clone().unwrap().r#type != stop_lookahead.clone().unwrap()
+        {
             statement_list.push(self.statement());
         }
 
@@ -72,11 +74,10 @@ impl Parser {
         self.eat(TokenType::LBracket);
         let body: Vec<Statement> = if lookahead != TokenType::RBracket {
             println!("yes");
-            self.statement_list()
+            self.statement_list(Some(TokenType::RBracket))
         } else {
             vec![]
         };
-        println!("We got there");
         self.eat(TokenType::RBracket);
 
         return Statement::Block(body);
