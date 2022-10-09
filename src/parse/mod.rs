@@ -8,11 +8,12 @@ use token::Token;
 use token::TokenType;
 
 // Migrate all Vec<Token> to statements and StatementList.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Statement {
     Block(StatementList),
     Expr(Token),
 }
+
 pub type StatementList = Vec<Statement>;
 
 pub struct Parser {
@@ -70,11 +71,14 @@ impl Parser {
         let lookahead = self.lookahead.clone().unwrap().r#type;
         self.eat(TokenType::LBracket);
         let body: Vec<Statement> = if lookahead != TokenType::RBracket {
+            println!("yes");
             self.statement_list()
         } else {
             vec![]
         };
+        println!("We got there");
         self.eat(TokenType::RBracket);
+
         return Statement::Block(body);
     }
 
@@ -94,7 +98,7 @@ impl Parser {
             Some(token) => match token.r#type {
                 TokenType::Integers => return self.numeric_literal(),
                 TokenType::String => return self.string_literal(),
-                _ => panic!("NOT COVERED"),
+                _ => panic!("NOT COVERED, {}", token),
             },
             None => panic!("Not covered"),
         }

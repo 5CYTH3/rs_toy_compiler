@@ -51,6 +51,7 @@ fn run() {
     }
 }
 
+use compiler::*;
 use parse::*;
 
 fn read() {
@@ -58,9 +59,11 @@ fn read() {
     let mut parser = Parser::new();
     let program: &str = r#"
     {
-        345 23;
+        345;
     }"#;
     let ast = parser.parse(program.to_owned());
+    let compiler = Compiler::new(ast.clone());
+    compiler.compile();
 
     println!("{:?}", ast)
 }

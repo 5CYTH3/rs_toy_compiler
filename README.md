@@ -1,13 +1,13 @@
 # expr_parser done in Rust
 
-I want to develop a tiny programming language with Rust and LLVM, that has a mathematics-like syntax.
+I want to develop a tiny programming language with Rust, that has a mathematics-like syntax.
 The syntax would look like this :
 
 ```
 def x :: Natural := 0;
 
 
-Axiom (x :: Natural) -> Integer
+Axiom (x :: Natural) -> Integer;
 func invert {
 	return -x;
 }
