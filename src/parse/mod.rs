@@ -11,7 +11,17 @@ use token::TokenType;
 #[derive(Debug, PartialEq, Clone)]
 pub enum Statement {
     Block(StatementList),
+    Expr(Expr),
+}
+
+// ! I think I kinda broke everything. There's some weird errors like "HEY BRO RECURSIVE DATA"
+pub enum Expr {
     Expr(Token),
+    BinaryExpr {
+        op: Token,
+        left: &'static Statement,
+        right: &'static Statement,
+    },
 }
 
 pub type StatementList = Vec<Statement>;
@@ -109,6 +119,16 @@ impl Parser {
         self.eat(TokenType::SemiColon);
 
         return expr;
+    }
+
+    fn additive_expr(&mut self) -> Statement {
+        let left = self.literal();
+        while self.lookahead.unwrap().r#type == TokenType::Plus {
+            let op = self.eat(TokenType::Plus);
+            let right = self.literal();
+            return Statement::Expr(Expr::BinaryExpr { op, &left, &right });
+        }
+        return Statement::Expr(Expr::Expr(left));
     }
 
     fn expr(&mut self) -> Statement {
