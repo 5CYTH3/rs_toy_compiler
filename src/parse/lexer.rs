@@ -37,6 +37,7 @@ impl Lexer {
             (r"^;", Some(TokenType::SemiColon)),
             (r"^\{", Some(TokenType::LBracket)),
             (r"^\}", Some(TokenType::RBracket)),
+            (r"^\+", Some(TokenType::Plus)),
         ]);
 
         // Sliced string
@@ -50,9 +51,12 @@ impl Lexer {
                     let capture = caps.get(0).unwrap().as_str();
                     self.cursor += capture.len();
                     match r_s.1 {
-                        Some(token_type) => {
-                            return Some(Token::new(token_type, capture.to_string()));
-                        }
+                        Some(token_type) => match token_type {
+                            TokenType::Plus => {
+                                return Some(Token::new(token_type, String::from("+")))
+                            }
+                            _ => return Some(Token::new(token_type, capture.to_string())),
+                        },
                         None => return self.get_next_token(), // _ => panic!("Unimplemented. Error occured when resolving token type."),
                     }
                 }

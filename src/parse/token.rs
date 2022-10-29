@@ -10,7 +10,7 @@ pub struct Token {
 
 impl fmt::Display for Token {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "\"{}\"", self.val)
+        write!(f, "{}", self.val)
     }
 }
 

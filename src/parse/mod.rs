@@ -1,3 +1,4 @@
+pub mod ast;
 pub mod lexer;
 pub mod token;
 
@@ -7,24 +8,7 @@ use lexer::Lexer;
 use token::Token;
 use token::TokenType;
 
-// Migrate all Vec<Token> to statements and StatementList.
-#[derive(Debug, PartialEq, Clone)]
-pub enum Statement {
-    Block(StatementList),
-    Expr(Expr),
-}
-
-// ! I think I kinda broke everything. There's some weird errors like "HEY BRO RECURSIVE DATA"
-pub enum Expr {
-    Expr(Token),
-    BinaryExpr {
-        op: Token,
-        left: &'static Statement,
-        right: &'static Statement,
-    },
-}
-
-pub type StatementList = Vec<Statement>;
+use ast::{Expr, Statement, StatementList};
 
 pub struct Parser {
     program: String,
@@ -68,12 +52,12 @@ impl Parser {
     Returns a Vector of Statements containing all tokens between a LeftBracket and a RightBracket.
     */
     fn statement_list(&mut self, stop_lookahead: Option<TokenType>) -> StatementList {
-        let mut statement_list: Vec<Statement> = vec![self.statement()];
+        let mut statement_list: StatementList = StatementList(vec![self.statement()]);
 
         while self.lookahead.clone() != None
             && self.lookahead.clone().unwrap().r#type != stop_lookahead.clone().unwrap()
         {
-            statement_list.push(self.statement());
+            statement_list.0.push(self.statement());
         }
 
         return statement_list;
@@ -101,10 +85,10 @@ impl Parser {
     fn block_statement(&mut self) -> Statement {
         let lookahead = self.lookahead.clone().unwrap().r#type;
         self.eat(TokenType::LBracket);
-        let body: Vec<Statement> = if lookahead != TokenType::RBracket {
+        let body: StatementList = if lookahead != TokenType::RBracket {
             self.statement_list(Some(TokenType::RBracket))
         } else {
-            vec![]
+            StatementList(vec![])
         };
         self.eat(TokenType::RBracket);
         return Statement::Block(body);
@@ -121,18 +105,28 @@ impl Parser {
         return expr;
     }
 
-    fn additive_expr(&mut self) -> Statement {
-        let left = self.literal();
-        while self.lookahead.unwrap().r#type == TokenType::Plus {
-            let op = self.eat(TokenType::Plus);
-            let right = self.literal();
-            return Statement::Expr(Expr::BinaryExpr { op, &left, &right });
-        }
-        return Statement::Expr(Expr::Expr(left));
+    fn expr(&mut self) -> Statement {
+        return self.additive_expr();
     }
 
-    fn expr(&mut self) -> Statement {
-        return Statement::Expr(self.literal());
+    fn additive_expr(&mut self) -> Statement {
+        let mut left = self.primary_expr();
+
+        while self.lookahead.clone().unwrap().r#type == TokenType::Plus {
+            let op = self.eat(TokenType::Plus);
+
+            let right = self.primary_expr(); // Error occurs here because the token isn't eaten and it wanna take "+" as primary expr value.
+            left = Statement::Expr(Expr::Binary {
+                op,
+                left: Box::new(left),
+                right: Box::new(right),
+            });
+        }
+        return left;
+    }
+
+    fn primary_expr(&mut self) -> Statement {
+        return Statement::Expr(Expr::Primary(self.literal()));
     }
 
     fn literal(&mut self) -> Token {
@@ -165,7 +159,6 @@ impl Parser {
             ),
         };
 
-        // ! Peut etre pb ici
         let token_type: TokenType = match t.clone() {
             Token { val, r#type } => r#type,
         };
@@ -178,6 +171,7 @@ impl Parser {
         }
 
         let new_lookahead = self.lexer.get_next_token();
+
         self.lookahead = new_lookahead;
 
         return t;
@@ -197,10 +191,10 @@ mod parser_test {
 
         assert_eq!(
             ast,
-            vec![Statement::Expr(Token {
+            StatementList(vec![Statement::Expr(Expr::Primary(Token {
                 r#type: TokenType::String,
                 val: String::from("\"25\"")
-            })]
+            }))])
         )
     }
 }

@@ -57,12 +57,13 @@ use parse::*;
 fn read() {
     // TODO: Create logging system to log all messages and halt the program (like when there is a syntax error).
     let mut parser = Parser::new();
-    let program: &str = r#"
-    345;"#;
+    let program: &str = r#"38 + 5;"#;
     let ast = parser.parse(program.to_owned());
 
-    println!("{:?}", ast);
+    println!("{}", ast);
 
-    let mut compiler = Compiler::new(ast.clone());
-    compiler.compile();
+    /*
+       let mut compiler = Compiler::new(ast.clone());
+       compiler.compile();
+    */
 }
