@@ -16,6 +16,10 @@ pub enum Expr {
         left: Box<Statement>,
         right: Box<Statement>,
     },
+    Assignment {
+        left: Box<Statement>,
+        right: Box<Statement>,
+    },
 }
 
 impl fmt::Display for Statement {
@@ -36,6 +40,7 @@ impl fmt::Display for Expr {
             Expr::Binary { op, left, right } => {
                 write!(f, "Binary {{ {} {} {} }}", left, op, right)
             }
+            Expr::Assignment { left, right } => write!(f, "Assign({} := {})", left, right),
         }
     }
 }

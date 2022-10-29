@@ -38,6 +38,11 @@ impl Lexer {
             (r"^\{", Some(TokenType::LBracket)),
             (r"^\}", Some(TokenType::RBracket)),
             (r"^\+", Some(TokenType::Plus)),
+            (r"^\)", Some(TokenType::RParen)),
+            (r"^\(", Some(TokenType::LParen)),
+            (r"^\*", Some(TokenType::Mul)),
+            (r"^\w+", Some(TokenType::Identifier)),
+            (r"^\:=", Some(TokenType::Assign)),
         ]);
 
         // Sliced string

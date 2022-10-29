@@ -106,16 +106,72 @@ impl Parser {
     }
 
     fn expr(&mut self) -> Statement {
-        return self.additive_expr();
+        return self.assignment_expr();
+    }
+
+    fn assignment_expr(&mut self) -> Statement {
+        let left = self.additive_expr();
+        if self.lookahead.clone().unwrap().r#type != TokenType::Assign {
+            return left;
+        }
+
+        self.eat(TokenType::Assign);
+        return Statement::Expr(Expr::Assignment {
+            left: self.check_valid_assignment_target(left),
+            right: Box::new(self.assignment_expr()),
+        });
+    }
+
+    // TODO: Implement this function.
+    fn check_valid_assignment_target(&mut self, statement: Statement) -> Statement {
+        match statement {
+            _ => panic!("INVALID LHS ASSIGNMENT EXPR."),
+        }
+    }
+
+    fn lhs_expr(&mut self) -> Token {
+        return self.identifier();
+    }
+
+    fn identifier(&mut self) -> Token {
+        let val = self.eat(TokenType::Identifier).val;
+        return Token {
+            r#type: TokenType::Assign,
+            val,
+        };
+    }
+
+    fn primary_expr(&mut self) -> Statement {
+        match self.lookahead.clone().unwrap().r#type {
+            TokenType::LParen => self.paren_expr(),
+            _ => Statement::Expr(Expr::Primary(self.literal())),
+        }
+    }
+
+    fn multiplicative_expr(&mut self) -> Statement {
+        self.binary_expr("multiplicative_expr", TokenType::Mul)
     }
 
     fn additive_expr(&mut self) -> Statement {
-        let mut left = self.primary_expr();
+        self.binary_expr("additive_expr", TokenType::Plus)
+    }
 
-        while self.lookahead.clone().unwrap().r#type == TokenType::Plus {
-            let op = self.eat(TokenType::Plus);
+    fn binary_expr(&mut self, expr_type: &str, token_type: TokenType) -> Statement {
+        let mut left = match expr_type {
+            "additive_expr" => self.multiplicative_expr(),
+            "multiplicative_expr" => self.primary_expr(),
+            _ => panic!("Not covered case. it's either a additive or multiplicative expr."),
+        };
 
-            let right = self.primary_expr(); // Error occurs here because the token isn't eaten and it wanna take "+" as primary expr value.
+        while self.lookahead.clone().unwrap().r#type == token_type {
+            let op = self.eat(token_type.clone());
+
+            let right = match expr_type {
+                "additive_expr" => self.multiplicative_expr(),
+                "multiplicative_expr" => self.primary_expr(),
+                _ => panic!("Not covered case. it's either a additive or multiplicative expr."),
+            };
+
             left = Statement::Expr(Expr::Binary {
                 op,
                 left: Box::new(left),
@@ -125,8 +181,11 @@ impl Parser {
         return left;
     }
 
-    fn primary_expr(&mut self) -> Statement {
-        return Statement::Expr(Expr::Primary(self.literal()));
+    fn paren_expr(&mut self) -> Statement {
+        self.eat(TokenType::LParen);
+        let expr = self.expr();
+        self.eat(TokenType::RParen);
+        return expr;
     }
 
     fn literal(&mut self) -> Token {

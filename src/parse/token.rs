@@ -31,18 +31,23 @@ pub enum TokenType {
     String,
 
     // Bin Op
-    Plus,      // +
-    Min,       // -
-    Mul,       // *
-    Div,       // /
-    Less,      // <
-    Greater,   // >
-    EqLess,    // <=
-    EqGreater, // >=
-    Percent,   // %
-    SemiColon, // ;
-    LBracket,  // {
-    RBracket,  // }
+    Plus,       // +
+    Min,        // -
+    Mul,        // *
+    Div,        // /
+    Less,       // <
+    Greater,    // >
+    EqLess,     // <=
+    EqGreater,  // >=
+    Percent,    // %
+    SemiColon,  // ;
+    LBracket,   // {
+    RBracket,   // }
+    LParen,     // (
+    RParen,     // )
+    Def,        // def
+    Assign,     // :=
+    Identifier, // Any ID for anything
 }
 
 impl TokenType {
