@@ -12,6 +12,37 @@ dependencies = [
 ]
 
 [[package]]
+name = "cc"
+version = "1.0.76"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "76a284da2e6fe2092f2353e51713435363112dfd60030e22add80be333fb928f"
+
+[[package]]
+name = "lazy_static"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
+
+[[package]]
+name = "libc"
+version = "0.2.137"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc7fcc620a3bff7cdd7a365be3376c97191aeaccc2a603e600951e452615bf89"
+
+[[package]]
+name = "llvm-sys"
+version = "150.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fab12165825f9fe4a9afa32c17bf55a4014a7f0385c5969975f2d04d36cd611c"
+dependencies = [
+ "cc",
+ "lazy_static",
+ "libc",
+ "regex",
+ "semver",
+]
+
+[[package]]
 name = "memchr"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -21,6 +52,7 @@ checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
 name = "parser"
 version = "0.1.0"
 dependencies = [
+ "llvm-sys",
  "regex",
 ]
 
@@ -40,3 +72,9 @@ name = "regex-syntax"
 version = "0.6.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49b3de9ec5dc0a3417da371aab17d729997c15010e7fd24ff707773a33bddb64"
+
+[[package]]
+name = "semver"
+version = "1.0.14"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e25dfac463d778e353db5be2449d1cce89bd6fd23c9f1ea21310ce6e5a1b29c4"

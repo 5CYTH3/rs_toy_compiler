@@ -63,6 +63,6 @@ fn read() {
     println!("{}", ast);
     /*
        let mut compiler = Compiler::new(ast.clone());
-       compiler.compile()    
+       compiler.compile()
     */
 }
