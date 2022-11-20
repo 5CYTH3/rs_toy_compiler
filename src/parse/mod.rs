@@ -117,7 +117,7 @@ impl Parser {
 
         self.eat(TokenType::Assign);
         return Statement::Expr(Expr::Assignment {
-            left: self.check_valid_assignment_target(left),
+            left: Box::new(self.check_valid_assignment_target(left)),
             right: Box::new(self.assignment_expr()),
         });
     }

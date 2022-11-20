@@ -61,9 +61,8 @@ fn read() {
     let ast = parser.parse(program.to_owned());
 
     println!("{}", ast);
-
     /*
        let mut compiler = Compiler::new(ast.clone());
-       compiler.compile();
+       compiler.compile()    
     */
 }
