@@ -114,7 +114,6 @@ impl Parser {
         if self.lookahead.clone().unwrap().r#type != TokenType::Assign {
             return left;
         }
-
         self.eat(TokenType::Assign);
         return Statement::Expr(Expr::Assignment {
             left: Box::new(self.check_valid_assignment_target(left)),
@@ -124,8 +123,18 @@ impl Parser {
 
     // TODO: Implement this function.
     fn check_valid_assignment_target(&mut self, statement: Statement) -> Statement {
-        match statement {
-            _ => panic!("INVALID LHS ASSIGNMENT EXPR."),
+        match statement.clone() {
+            Statement::Expr(expr) => match expr {
+                Expr::Primary(token) => {
+                    if token.r#type == TokenType::Identifier {
+                        statement
+                    } else {
+                        panic!("Got something else than an ID : {}", token.r#type)
+                    }
+                }
+                _ => panic!("INVALID LHS ASSIGNMENT EXPR."),
+            },
+            _ => panic!("Got anything than an expression which was not intended."),
         }
     }
 
@@ -136,7 +145,7 @@ impl Parser {
     fn identifier(&mut self) -> Token {
         let val = self.eat(TokenType::Identifier).val;
         return Token {
-            r#type: TokenType::Assign,
+            r#type: TokenType::Identifier,
             val,
         };
     }
@@ -144,8 +153,15 @@ impl Parser {
     fn primary_expr(&mut self) -> Statement {
         match self.lookahead.clone().unwrap().r#type {
             TokenType::LParen => self.paren_expr(),
-            _ => Statement::Expr(Expr::Primary(self.literal())),
+            TokenType::String | TokenType::Integers => {
+                Statement::Expr(Expr::Primary(self.literal()))
+            }
+            _ => Statement::Expr(Expr::Primary(self.lhs_expr())),
         }
+    }
+
+    fn is_literal(&self, token: Token) -> bool {
+        token.r#type == TokenType::Integers || token.r#type == TokenType::String
     }
 
     fn multiplicative_expr(&mut self) -> Statement {
@@ -153,9 +169,14 @@ impl Parser {
     }
 
     fn additive_expr(&mut self) -> Statement {
-        self.binary_expr("additive_expr", TokenType::Plus)
+        self.binary_expr("additive_expr", TokenType::Add)
     }
 
+    /*
+     * This binary expression first check if the type of the left hand side expression is additive or multiplicative.
+     * Then while the lookahead is the operator, we eat it and match the expression type of the right hand side expression.
+     * Finally, we make left the binary expression and return it.
+     */
     fn binary_expr(&mut self, expr_type: &str, token_type: TokenType) -> Statement {
         let mut left = match expr_type {
             "additive_expr" => self.multiplicative_expr(),
@@ -181,6 +202,9 @@ impl Parser {
         return left;
     }
 
+    /*
+     * Eat the left parenthesis then convert it's content to an expression and eat the right parenthesis. Return the given expression.
+     */
     fn paren_expr(&mut self) -> Statement {
         self.eat(TokenType::LParen);
         let expr = self.expr();
@@ -199,16 +223,26 @@ impl Parser {
         }
     }
 
+    /*
+     * Eat the number then return the number itself.
+     */
     fn numeric_literal(&mut self) -> Token {
         let eaten_token = self.eat(TokenType::Integers);
         return Token::new(TokenType::Integers, eaten_token.val);
     }
 
+    /*
+     * Eat the string then return a token containing the value of this string.
+     */
     fn string_literal(&mut self) -> Token {
         let eaten_token = self.eat(TokenType::String);
         return Token::new(TokenType::String, eaten_token.val);
     }
 
+    /*
+     * A generic function that eat the token specified (@targetted_token_type) and
+     * advance to the next token. It basically advance the cursor to the next token while destroying the previous one.
+     */
     fn eat(&mut self, targetted_token_type: TokenType) -> Token {
         let t: Token = match self.lookahead.clone() {
             Some(val) => val,
@@ -219,7 +253,7 @@ impl Parser {
         };
 
         let token_type: TokenType = match t.clone() {
-            Token { val, r#type } => r#type,
+            Token { val: _, r#type } => r#type,
         };
 
         if token_type != targetted_token_type {

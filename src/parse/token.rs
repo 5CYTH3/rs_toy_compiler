@@ -31,7 +31,7 @@ pub enum TokenType {
     String,
 
     // Bin Op
-    Plus,       // +
+    Add,       // +
     Min,        // -
     Mul,        // *
     Div,        // /
@@ -71,7 +71,7 @@ impl fmt::Display for TokenType {
         let fmt_token = match self {
             TokenType::Integers => "Int",
             TokenType::String => "String",
-            TokenType::Plus => "+",
+            TokenType::Add => "+",
             TokenType::Min => "-",
             TokenType::Mul => "*",
             TokenType::Div => "/",
@@ -81,6 +81,9 @@ impl fmt::Display for TokenType {
             TokenType::EqGreater => ">=",
             TokenType::Percent => "%",
             TokenType::SemiColon => ";",
+            TokenType::Assign => ":=",
+            TokenType::Def => "def",
+            TokenType::Natural => "nat",
             _ => "!!!uninmplemented!!!",
         };
         write!(f, "{}", fmt_token)
